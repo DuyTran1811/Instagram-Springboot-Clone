@@ -1,58 +1,77 @@
 package com.instagram.loginservice.config;
 
-import com.instagram.loginservice.service.UserDetailsServiceImpl;
-import lombok.AllArgsConstructor;
+import com.instagram.loginservice.module.Role;
+import com.instagram.loginservice.service.jwt.JwtTokenProvider;
+import com.instagram.loginservice.service.jwt.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
+import javax.servlet.http.HttpServletResponse;
+
 @EnableWebSecurity
-@AllArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserDetailsServiceImpl userDetailsService;
-    private final AuthEntryPointJwt unauthorizedHandler;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private UserDetailsService userDetailsService;
+    private JwtConfig jwtConfig;
+    private JwtTokenProvider tokenProvider;
+    private UserService userService;
+    @Value("${configJwt.service.username}")
+    private String serviceUsername;
+    @Value("${configJwt.service.password}")
+    private String servicePassword;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/test/**").permitAll()
+        http
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                .and()
+                .addFilterBefore(new JwtTokenAuthenticationFilter(serviceUsername, jwtConfig, tokenProvider, userService), UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/signin").permitAll()
+                .antMatchers(HttpMethod.POST, "/users").anonymous()
                 .anyRequest().authenticated();
+    }
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    // Spring has UserDetailsService interface, which can be overriden to provide our implementation for fetching user from database (or any other source).
+    // The UserDetailsService object is used by the auth manager to load the user from database.
+    // In addition, we need to define the password encoder also. So, auth manager can compare and verify passwords.
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // Configure in-memory authentication provider for service accounts for
+        // service inter-communication
+        auth.inMemoryAuthentication()
+                .withUser(serviceUsername)
+                .password(passwordEncoder().encode(servicePassword))
+                .roles(Role.SERVICE.getName());
+
+        // Configure DB authentication provider for user accounts
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

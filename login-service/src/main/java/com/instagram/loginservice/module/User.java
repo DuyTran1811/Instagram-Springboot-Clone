@@ -1,10 +1,15 @@
 package com.instagram.loginservice.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -13,46 +18,51 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Table(name = "users",
-        uniqueConstraints = {@UniqueConstraint(columnNames = "username"), @UniqueConstraint(columnNames = "email")})
-@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userid;
-
+    private String id;
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 15)
     private String username;
-
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 100)
+    @JsonIgnore
+    private String password;
+    @NotBlank
+    @Size(max = 40)
     @Email
     private String email;
-
-    @NotBlank
-    @Size(max = 120)
-    private String password;
-
     @CreatedDate
     private Instant createdAt;
-
     @LastModifiedDate
     private Instant updatedAt;
     private boolean active;
+    private Profile userProfile;
+    private Set<Role> roles;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id")
-    private Address address;
+    public User(User user) {
+        this.id = user.id;
+        this.username = user.username;
+        this.password = user.password;
+        this.email = user.email;
+        this.createdAt = user.getCreatedAt();
+        this.updatedAt = user.getUpdatedAt();
+        this.active = user.active;
+        this.userProfile = user.userProfile;
+        this.roles = user.roles;
+    }
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.active = true;
+        this.roles = new HashSet<>() {{
+            new Role("USER");
+        }};
+    }
 }

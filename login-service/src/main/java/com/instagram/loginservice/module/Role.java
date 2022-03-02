@@ -1,16 +1,14 @@
 package com.instagram.loginservice.module;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import javax.persistence.*;
+import lombok.NoArgsConstructor;
 
 @Data
-@Entity
-@Table(name = "roles")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer roleId;
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ERole name;
+    public final static Role USER = new Role("USER");
+    public final static Role SERVICE = new Role("SERVICE");
+    private String name;
 }
