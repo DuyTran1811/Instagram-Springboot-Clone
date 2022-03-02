@@ -1,21 +1,25 @@
 version: '3'
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    environment:
-      - MONGO_LOG_DIR=/dev/null
-    ports:
-      - '27017:27017'
+  mysql:
+    image: mysql
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
     volumes:
-      - /Users/duytc/Documents/Docker/Docker-data/mongodb:/data/db
+      - /Users/duytc/Documents/Docker/Docker-data/Mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: duytc
+    ports:
+      - '3306:3306'
   neo4j:
     image: neo4j:latest
+    container_name: neo4j
     ports:
       - "7474:7474"
       - "7687:7687"
   cassandra:
     image: cassandra:latest
+    container_name: cassandra
     ports:
       - "7000:7000"
       - "9042:9042"
@@ -35,6 +39,7 @@ services:
       - zookeeper
   zookeeper:
     image: wurstmeister/zookeeper
+    container_name: zookeeper
     ports:
       - '2181:2181'
     environment:
