@@ -6,7 +6,12 @@
 
   <groupId>com.instagram.app</groupId>
   <artifactId>microservice</artifactId>
+  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+
+  <modules>
+    <module>discovery</module>
+  </modules>
 
   <name>microservice</name>
   <description>Projects for DuyTC</description>
