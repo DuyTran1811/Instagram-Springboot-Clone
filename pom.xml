@@ -11,6 +11,7 @@
 
   <modules>
     <module>discovery</module>
+    <module>login-service</module>
   </modules>
 
   <name>microservice</name>
