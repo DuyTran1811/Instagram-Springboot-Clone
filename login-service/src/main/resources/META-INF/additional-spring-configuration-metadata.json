@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "security.basic.enabled",
+      "type": "java.lang.String",
+      "description": "Description for security.basic.enabled."
+    },
+    {
+      "name": "security.jwt.header",
+      "type": "java.lang.String",
+      "description": "Description for security.jwt.header."
+    }
+  ] }
