@@ -51,15 +51,13 @@ public class UserService {
         if (userRepository.existsByUsername(user.getUsername())) {
             log.warn("username {} already exists.", user.getUsername());
 
-            throw new UsernameAlreadyExistsException(
-                    String.format("username %s already exists", user.getUsername()));
+            throw new UsernameAlreadyExistsException(String.format("username %s already exists", user.getUsername()));
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
             log.warn("email {} already exists.", user.getEmail());
 
-            throw new EmailAlreadyExistsException(
-                    String.format("email %s already exists", user.getEmail()));
+            throw new EmailAlreadyExistsException(String.format("email %s already exists", user.getEmail()));
         }
         user.setActive(true);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
