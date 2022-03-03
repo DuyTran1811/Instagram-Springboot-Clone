@@ -19,13 +19,11 @@ import java.util.Optional;
 @Slf4j
 public class UserService {
 
-    private PasswordEncoder passwordEncoder;
-    private IUserRepository userRepository;
-    private UserEventSender userEventSender;
+    private final PasswordEncoder passwordEncoder;
+    private final IUserRepository userRepository;
+    private final UserEventSender userEventSender;
 
-    public UserService(IUserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       UserEventSender userEventSender) {
+    public UserService(IUserRepository userRepository, PasswordEncoder passwordEncoder, UserEventSender userEventSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userEventSender = userEventSender;
@@ -80,11 +78,8 @@ public class UserService {
                     String oldProfilePic = user.getUserProfile().getProfilePictureUrl();
                     user.getUserProfile().setProfilePictureUrl(uri);
                     User savedUser = userRepository.save(user);
-
                     userEventSender.sendUserUpdated(savedUser, oldProfilePic);
-
                     return savedUser;
-                })
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("user id %s not found", id)));
+                }).orElseThrow(() -> new ResourceNotFoundException(String.format("user id %s not found", id)));
     }
 }
