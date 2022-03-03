@@ -22,9 +22,9 @@ import static java.util.stream.Collectors.toList;
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtConfig jwtConfig;
-    private JwtTokenProvider tokenProvider;
-    private UserService userService;
-    private String serviceUsername;
+    private final JwtTokenProvider tokenProvider;
+    private final UserService userService;
+    private final String serviceUsername;
 
     public JwtTokenAuthenticationFilter(String serviceUsername, JwtConfig jwtConfig, JwtTokenProvider tokenProvider, UserService userService) {
         this.serviceUsername = serviceUsername;
