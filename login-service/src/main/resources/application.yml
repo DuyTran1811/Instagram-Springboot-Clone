@@ -1,11 +1,11 @@
-server:
-  port: 9000
 spring:
   application:
     name: login-service
+
   data:
     mongodb:
-      database: userdb
+      database: instaclone_auth
+
   cloud:
     stream:
       kafka:
@@ -18,19 +18,18 @@ spring:
         momentsUserChanged:
           destination: moments.user.changed
           contentType: application/json
-  security:
-    user:
-      name: duytc
-      password: duytc
+server:
+  port: 9000
 
 eureka:
   client:
     service-url:
       default-zone: http://localhost:8761/eureka
 
-configJwt:
+security:
   basic:
     enable: false
+
   jwt:
     uri: /auth/**
     header: Authorization
@@ -41,6 +40,3 @@ configJwt:
   service:
     username: d245ef53-5ad5-4216-9c56-89fe0f8302a0
     password: ef919ae4-b893-4969-b782-57978180ad33
-#  app:
-#    jwtSecret: bezKoderSecretKey
-#    jwtExpirationMs: 86400000

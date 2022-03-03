@@ -1,11 +1,14 @@
 package com.instagram.loginservice;
 
+import com.instagram.loginservice.messaging.UserEventStream;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 
-@EnableEurekaClient
 @SpringBootApplication
+@EnableMongoAuditing
+@EnableBinding(UserEventStream.class)
 public class LoginServiceApplication {
 
     public static void main(String[] args) {
