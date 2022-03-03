@@ -14,7 +14,7 @@ spring:
       max-request-size: 20MB
 
 file:
-  upload-dir: /Users/duytc/Documents/microservice/media-service/src/main/resources/img/
+  upload-dir: /Users/duytc/Documents/microservice/media-service/src/main/resources/
   path:
     prefix: /images
 
