@@ -12,6 +12,7 @@
   <modules>
     <module>discovery</module>
     <module>login-service</module>
+    <module>media-service</module>
   </modules>
 
   <name>microservice</name>
