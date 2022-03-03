@@ -37,8 +37,7 @@ public class PostEventSender {
 
     private void sendPostChangedEvent(PostEventPayload payload) {
 
-        Message<PostEventPayload> message =
-                MessageBuilder
+        Message<PostEventPayload> message = MessageBuilder
                         .withPayload(payload)
                         .setHeader(KafkaHeaders.MESSAGE_KEY, payload.getId())
                         .build();
