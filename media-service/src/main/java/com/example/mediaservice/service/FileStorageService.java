@@ -52,9 +52,7 @@ public class FileStorageService {
             if (filename.contains("..")) {
                 // This is a security check
                 log.warn("cannot store file with relative path {}", filename);
-                throw new InvalidFileNameException(
-                        "Cannot store file with relative path outside current directory "
-                                + filename);
+                throw new InvalidFileNameException("Cannot store file with relative path outside current directory " + filename);
             }
 
             String extension = FilenameUtils.getExtension(filename);
