@@ -1,10 +1,20 @@
+server:
+  port: 9000
+
 spring:
   application:
     name: login-service
 
-  data:
-    mongodb:
-      database: instaclone_auth
+  datasource:
+    url: jdbc:mysql://localhost:3306/userdb?useSSL=false
+    username: root
+    password: duytc
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
 
   cloud:
     stream:
@@ -18,24 +28,23 @@ spring:
         momentsUserChanged:
           destination: moments.user.changed
           contentType: application/json
-server:
-  port: 9000
+
 
 eureka:
   client:
     service-url:
       default-zone: http://localhost:8761/eureka
 
-security:
-  basic:
-    enable: false
+#security:
+#  basic:
+#    enable: false
 
   jwt:
     uri: /auth/**
     header: Authorization
     prefix: Bearer
     expiration: 86400
-    secret: JwtSecretKey
+    secret: Jwt
 
   service:
     username: d245ef53-5ad5-4216-9c56-89fe0f8302a0
