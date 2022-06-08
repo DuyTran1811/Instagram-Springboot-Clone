@@ -14,7 +14,7 @@ public interface IUserService {
 
     List<User> getListByUserName(String username);
 
-    void upDateUserName(Long id,User user);
+    void upDateUserName(Long id, SignUpRequest user);
 
     void registerUser(SignUpRequest signUp);
 

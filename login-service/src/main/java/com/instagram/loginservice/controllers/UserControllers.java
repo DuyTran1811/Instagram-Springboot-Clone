@@ -1,6 +1,5 @@
 package com.instagram.loginservice.controllers;
 
-import com.instagram.loginservice.module.User;
 import com.instagram.loginservice.payload.request.LoginRequest;
 import com.instagram.loginservice.payload.request.SignUpRequest;
 import com.instagram.loginservice.payload.response.JwtResponse;
@@ -35,8 +34,8 @@ public class UserControllers {
     }
 
     @PutMapping(value = "/updateUser/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable(value = "id") long id, @RequestBody User user) {
-        userService.upDateUserName(id, user);
+    public ResponseEntity<?> updateUser(@PathVariable(value = "id") long id, @RequestBody SignUpRequest update) {
+        userService.upDateUserName(id, update);
         return ResponseEntity.ok(new MessageResponse("User Update successfully!"));
     }
 }
